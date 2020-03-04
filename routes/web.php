@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['prefix'=>'case_planners'], function () {
+    Route::get('/', 'CasePlannerController@index')->name('case_planners.index');
+    Route::post('store', 'CasePlannerController@store')->name('case_planners.store');
+    Route::post('update', 'CasePlannerController@update')->name('case_planners.update');
+});
+
+
