@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CasePlanner extends Model
+class CityStreets extends Model
 {
-    protected $table = 'case_planners';
+    protected $table = 'cities_streets';
     protected $fillable = ['*'];
 }

@@ -13,14 +13,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return view('welcome');
 });
 
-Route::group(['prefix'=>'case_planners'], function () {
-    Route::get('/', 'CasePlannerController@index')->name('case_planners.index');
-    Route::post('store', 'CasePlannerController@store')->name('case_planners.store');
-    Route::post('update', 'CasePlannerController@update')->name('case_planners.update');
-});
+Auth::routes();
+//Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/', 'HomeController@index')->name('index');
+
+//Route::group(['prefix'=>'city'], function () {
+//    Route::get('/', 'CitiesController@index')->name('city.index');
+//    Route::post('store', 'CitiesController@store')->name('city.store');
+//    Route::post('update', 'CitiesController@update')->name('city.update');
+//});
+
+
+
 
 
