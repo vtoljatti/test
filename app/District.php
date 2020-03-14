@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CityDistrict extends Model
+class District extends Model
 {
     protected $table = 'cities_districts';
     protected $fillable = ['*'];
@@ -22,6 +22,6 @@ class CityDistrict extends Model
      */
     public function streets()
     {
-        return $this->hasMany(CityStreets::class, 'district_id', 'id');
+        return $this->hasMany(Streets::class, 'district_id', 'id');
     }
 }

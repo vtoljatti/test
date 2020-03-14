@@ -13,7 +13,7 @@
                     v-model="salesNumber1"
                     placeholder="000001"
                     min="0"
-                    maxlength="6"
+                    :has-counter="false"
                     required
                     size="sm"
                 />
@@ -47,10 +47,15 @@ export default {
         return {
             salesNumber1: '',
             salesNumber2: '',
-            salesNumber3: ''
+            salesNumber3: '',
+            max: 5,
         }
     },
     methods: {
+        asdf(e) {
+           e.preventDefault()
+        },
+
         dataCommon() {
             this.data({
                 salesNumber1: this.salesNumber1,

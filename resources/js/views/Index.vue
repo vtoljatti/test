@@ -1,6 +1,11 @@
 <template>
     <div>
-        <FormAct />
+        <strong class="text-muted h5 font-weight-normal">
+            Главная
+        </strong><hr>
+        <p class="font-italic">
+            Тут будут графики, последние изменения, ну короче вся нужная информация
+        </p>
     </div>
 </template>
 

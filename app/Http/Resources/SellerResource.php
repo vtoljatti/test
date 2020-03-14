@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\CityStreets;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CityStreetsResource extends JsonResource
+class SellerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

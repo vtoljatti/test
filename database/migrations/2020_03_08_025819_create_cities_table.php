@@ -16,7 +16,7 @@ class CreateCitiesTable extends Migration
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->string('name')->index()->comment('Название');
-            $table->integer('is_hidden');
+            $table->integer('is_hidden')->default(0)->comment('Скрытый');
             $table->timestamps();
         });
 
@@ -24,7 +24,7 @@ class CreateCitiesTable extends Migration
             $table->id();
             $table->string('name')->index()->comment('Название');
             $table->integer('city_id')->index()->comment('ID города');
-            $table->integer('is_hidden');
+            $table->integer('is_hidden')->default(0)->comment('Скрытый');
             $table->timestamps();
         });
 
@@ -33,7 +33,7 @@ class CreateCitiesTable extends Migration
             $table->string('name')->index()->comment('Название');
             $table->integer('district_id')->index()->comment('ID района');
             $table->integer('city_id')->index()->comment('ID города');
-            $table->integer('is_hidden');
+            $table->integer('is_hidden')->default(0)->comment('Скрытый');
             $table->timestamps();
         });
     }

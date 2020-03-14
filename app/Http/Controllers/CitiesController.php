@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\City;
-use App\CityDistrict;
-use App\CityStreets;
-use App\Http\Resources\CityDistrictResource;
+use App\District;
+use App\Streets;
+use App\Http\Resources\DistrictResource;
 use App\Http\Resources\CityResource;
-use App\Http\Resources\CityStreetsResource;
+use App\Http\Resources\StreetsResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CitiesController extends Controller
 {
     /**
-     * иПолучаем все города с районами и улицам
+     * иПолучаем все города
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -25,7 +26,7 @@ class CitiesController extends Controller
     }
 
     /**
-     * Получаем один город с районами и улицами
+     * Получаем один город
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -38,7 +39,7 @@ class CitiesController extends Controller
     }
 
     /**
-     * Получаем районы с улицами конкретного города
+     * Получаем районы
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -46,12 +47,12 @@ class CitiesController extends Controller
     public function districtsCity(Request $request)
     {
         return response()->json([
-            'districts' => CityDistrictResource::collection(CityDistrict::where('city_id', $request->city_id)->get()),
+            'districts' => DistrictResource::collection(District::where('city_id', $request->city_id)->get()),
         ]);
     }
 
     /**
- * Получаем улицы конкретного города
+ * Получаем улицы
  *
  * @param Request $request
  * @return \Illuminate\Http\JsonResponse
@@ -59,7 +60,7 @@ class CitiesController extends Controller
     public function streetsCity(Request $request)
     {
         return response()->json([
-            'streets' => CityStreetsResource::collection(CityStreets::where('city_id', $request->city_id)->get()),
+            'streets' => StreetsResource::collection(Streets::where('city_id', $request->city_id)->get()),
         ]);
     }
 
@@ -72,16 +73,8 @@ class CitiesController extends Controller
     public function streetsDistrictCity(Request $request)
     {
         return response()->json([
-            'streets' => CityStreetsResource::collection(CityStreets::where('city_id', $request->city_id)->where('district_id', $request->district_id)->get()),
+            'streets' => StreetsResource::collection(Streets::where('city_id', $request->city_id)->where('district_id', $request->district_id)->get()),
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return string
-     */
-    public function store(Request $request)
-    {
-
-    }
 }

@@ -62,24 +62,22 @@ export default {
             this.dateData = ctx
         },
         setTomorrow() {
-            this.dateTomorrow = new Date(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1));
-            let d = this.dateTomorrow.getDate();
-            let m = this.dateTomorrow.getMonth() + 1;
-            let y = this.dateTomorrow.getFullYear();
-            this.dateTomorrow = y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
             this.dateValue = this.dateTomorrow;
         },
         setAfterTomorrow() {
-            this.dateAfterTomorrow = new Date(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 2));
-            let d = this.dateAfterTomorrow.getDate();
-            let m = this.dateAfterTomorrow.getMonth() + 1;
-            let y = this.dateAfterTomorrow.getFullYear();
-            this.dateAfterTomorrow = y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
             this.dateValue = this.dateAfterTomorrow;
+        },
+        setDate(field, addDay = 0) {
+            this[field] = new Date(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + addDay));
+            let d = this[field].getDate();
+            let m = this[field].getMonth() + 1;
+            let y = this[field].getFullYear();
+            this[field] = y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
         },
         dataCommon() {
             this.data({
                 date: this.dateData.selectedYMD ?? '',
+                dateAdd: this.date,
             })
         },
     },
@@ -103,7 +101,10 @@ export default {
     created() {
         this.setTomorrow();
         this.setAfterTomorrow();
-        this.dateValue = this.dateTomorrow;
+        this.setDate('date')
+        this.setDate('dateValue', 1)
+        this.setDate('dateTomorrow', 1)
+        this.setDate('dateAfterTomorrow', 2)
     }
 }
 </script>

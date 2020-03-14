@@ -8,7 +8,20 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     @yield('head')
 </head>
-<body style="min-width: 300px;">
-    <div id="app"></div>
+<body style="min-width: 300px;" class="container bg-light">
+        @if (Route::has('login'))
+            <div class="top-right links">
+                @auth
+                    <div id="app"></div>
+                @else
+                    <a href="{{ route('login') }}">Login</a>
+
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}">Register</a>
+                    @endif
+                @endauth
+            </div>
+        @endif
+
 </body>
 </html>

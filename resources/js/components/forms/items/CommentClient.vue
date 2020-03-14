@@ -50,8 +50,10 @@
                         <b-form-checkbox
                             v-if="liftUp == 1"
                             name="is_elevator"
+                            v-model="questionable"
                             value="1"
                             unchecked-value="0"
+                            plain
                         >
                             ???
                         </b-form-checkbox>
@@ -62,6 +64,7 @@
                             name="is_elevator"
                             value="1"
                             unchecked-value="0"
+                            plain
                         >
                             Лифт
                         </b-form-checkbox>
@@ -96,6 +99,7 @@
 <script>
 export default {
     props: ['data'],
+
     data() {
         return {
             comment: null,
@@ -103,9 +107,12 @@ export default {
             dialingTime: 60,
             liftUp: null,
             elevator: null,
-            floor: 1
+            floor: 1,
+            questionable: 0,
+
         }
     },
+
     methods: {
         dataCommon() {
             this.data({
@@ -114,10 +121,12 @@ export default {
                 dialingTime: this.dialingTime,
                 liftUp: this.liftUp,
                 elevator: this.elevator,
-                floor: this.floor
+                floor: this.floor,
+                questionable: this.questionable
             })
         }
     },
+
     watch: {
         comment: function (val) {
             this.dataCommon()
@@ -136,8 +145,12 @@ export default {
         },
         floor: function (val) {
             this.dataCommon()
+        },
+        questionable: function (val) {
+            this.dataCommon()
         }
     },
+
     created() {
         this.dataCommon()
     }

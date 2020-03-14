@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\CityStreets;
+use App\Streets;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CityDistrictResource extends JsonResource
+class DistrictResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,7 +20,7 @@ class CityDistrictResource extends JsonResource
             'name' => $this->name,
             'city_id' => $this->city_id,
             'is_hidden' => $this->is_hidden,
-            'streets' => CityStreetsResource::collection($this->streets),
+//            'streets' => StreetsResource::collection($this->streets),
         ];
     }
 }

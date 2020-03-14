@@ -29,13 +29,21 @@
                     </b-form-radio>
                 </b-form-radio-group>
 
-                <b-form-group class="pt-3 mb-0" v-if="cityId != 0">
-                    <b-form-radio v-model="districtId" name="some-radios" value="1" required>Автозаводский</b-form-radio>
-                    <b-form-radio v-model="districtId" name="some-radios" value="2" required>Комсомольский</b-form-radio>
-                    <b-form-radio v-model="districtId" name="some-radios" value="3" required>Центральный</b-form-radio>
-                    <b-form-radio v-model="districtId" name="some-radios" value="4" required>Шлюзовой</b-form-radio>
-                    <b-form-radio v-model="districtId" name="some-radios" value="5" required>Жигулевское море</b-form-radio>
-                </b-form-group>
+                <div v-if="this.allDistricts.length === 0" class="text-center">
+                    <b-spinner type="grow" label="Loading..."></b-spinner>
+                </div>
+                <div v-else>
+                    <b-form-group class="pt-3 mb-0" v-if="cityId != 0">
+                        <b-form-radio
+                            v-for="district in allDistricts"
+                            v-model="districtId"
+                            :value="district.id"
+                            required
+                        >
+                            {{ district.name }}
+                        </b-form-radio>
+                    </b-form-group>
+                </div>
 
                 <b-form-input
                     list="list-villages"
@@ -50,8 +58,8 @@
                 />
                 <datalist id="list-villages">
                     <b-row>
-                        <b-col v-for="village in villages">
-                            <option>{{ village.name }}</option>
+                        <b-col>
+                            <option v-for="village in allVillages">{{ village.name }}</option>
                         </b-col>
                     </b-row>
                 </datalist>
@@ -62,16 +70,30 @@
 
 <script>
 export default {
-    props: ['data'],
+    props: {
+      data: {
+          type: Function,
+          default: () => {},
+          required: true
+      }
+    },
     data() {
         return {
             cityUser: 'Тольятти',
             cityId: 1,
             districtId: '',
-            city: '',
+            city: 'Тольятти',
             district: '',
             villages: '',
-            loading: ''
+            loading: true
+        }
+    },
+    computed: {
+        allVillages() {
+            return this.$store.getters['cities/allVillages']
+        },
+        allDistricts() {
+            return this.$store.getters['cities/allDistricts']
         }
     },
     methods: {
@@ -80,20 +102,8 @@ export default {
                 cityId: this.cityId,
                 city: this.city,
                 district: this.district,
+                districtId: this.districtId
             })
-        },
-        fetchData() {
-            this.error = this.users = null;
-            this.loading = true;
-            axios
-                .get('/api/villages')
-                .then(response => {
-                    this.loading = false;
-                    this.villages = response.data.villages;
-                }).catch(error => {
-                this.loading = false;
-                this.error = error.response.data.message || error.message;
-            });
         }
     },
     watch: {
@@ -108,13 +118,24 @@ export default {
         city: function (val) {
             this.dataCommon()
         },
-        district: function (val) {
+        districtId: function (val) {
             this.dataCommon()
         },
     },
     created() {
-        this.fetchData();
         this.dataCommon()
+    },
+    beforeMount() {
+        if (this.allVillages.length === 0) {
+            this.$store.dispatch('cities/getAllVillages');
+            console.log('Загружены данные cities/getAllVillages')
+        }
+
+        if (this.allDistricts.length === 0) {
+            this.$store.dispatch('cities/getAllDistricts');
+            console.log('Загружены данные cities/getAllDistricts')
+        }
     }
 }
 </script>
+

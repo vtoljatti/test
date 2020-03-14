@@ -21,7 +21,7 @@
                 </label>
                 <datalist id="list-streets">
                     <b-row>
-                        <b-col v-for="street in streets">
+                        <b-col v-for="street in allStreets">
                             <option>{{ street.name }}</option>
                         </b-col>
                     </b-row>
@@ -40,11 +40,11 @@
                     />
                 </label>
                 <label class="small text-left mx-1">
-                    <small>Квартира</small>
+                    <small>Квартира/офис</small>
                     <b-form-input
                         type="text"
                         class="text-center"
-                        placeholder="Квартира"
+                        placeholder="кв/оф"
                         v-model="apartment"
                         size="sm"
                     />
@@ -70,10 +70,14 @@ export default {
     data() {
         return {
             street: null,
-            streets: null,
             home: null,
             apartment: null,
             porch: null
+        }
+    },
+    computed: {
+        allStreets() {
+            return this.$store.getters['cities/allStreets']
         }
     },
     methods: {
@@ -84,19 +88,6 @@ export default {
                 apartment: this.apartment,
                 porch: this.porch
             })
-        },
-        fetchData() {
-            this.error = this.users = null;
-            this.loading = true;
-            axios
-                .get('/api/cities/1/streets')
-                .then(response => {
-                    this.loading = false;
-                    this.streets = response.data.streets;
-                }).catch(error => {
-                this.loading = false;
-                this.error = error.response.data.message || error.message;
-            });
         }
     },
     watch: {
@@ -115,7 +106,12 @@ export default {
     },
     created() {
         this.dataCommon();
-        this.fetchData();
+    },
+    beforeMount() {
+        if (this.allStreets.length === 0) {
+            this.$store.dispatch('cities/getAllStreets')
+            console.log('Загружены данные cities/getAllStreets')
+        }
     }
 }
 </script>

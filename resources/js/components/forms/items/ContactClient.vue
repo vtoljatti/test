@@ -28,7 +28,7 @@
                         size="sm"
                         required
                         @focusout="focusoutPhone"
-
+                        @input="phoneFormat($event, 'phone')"
                     />
                 </label>
 
@@ -43,6 +43,7 @@
                         size="sm"
                         required
                         @focusout="focusoutPhoneSpare"
+                        @input="phoneFormat($event, 'phoneSpare')"
 
                     />
                 </label>
@@ -56,6 +57,7 @@
                         maxlength="9"
                         size="sm"
                         required
+                        @input="phoneFormatHome($event, 'phoneHome')"
                     />
                 </label>
             </div>
@@ -93,50 +95,34 @@ export default {
                 this.phoneSpare = ''
             }
         },
-        phoneFormat() {
-            if (this.phone !== '') {
-                this.phone = this.phone.replace(new RegExp('\\D+', 'g'), '');
-                let p1 = this.phone.substr(1, 3);
-                let p2 = this.phone.substr(4, 3);
-                let p3 = this.phone.substr(7, 2);
-                let p4 = this.phone.substr(9, 2);
+        phoneFormat(value, field) {
+            if (this.value !== '') {
+                this[field] = this[field].replace(new RegExp('\\D+', 'g'), '');
+                let p1 = this[field].substr(1, 3);
+                let p2 = this[field].substr(4, 3);
+                let p3 = this[field].substr(7, 2);
+                let p4 = this[field].substr(9, 2);
                 if (p2.length > 0) {
-                    this.phone = '+7(' + p1 + ')' + p2 + '-' + p3 + '-' + p4;
+                    this[field] = '+7(' + p1 + ')' + p2 + '-' + p3 + '-' + p4;
                 } else if (p1.length > 0) {
-                    this.phone = '+7(' + p1;
+                    this[field] = '+7(' + p1;
                 } else {
-                    this.phone = '+7';
+                    this[field] = '+7';
                 }
             }
         },
-        phoneSpareFormat() {
-            if (this.phoneSpare !== '') {
-                this.phoneSpare = this.phoneSpare.replace(new RegExp('\\D+', 'g'), '');
-                let p1 = this.phoneSpare.substr(1, 3);
-                let p2 = this.phoneSpare.substr(4, 3);
-                let p3 = this.phoneSpare.substr(7, 2);
-                let p4 = this.phoneSpare.substr(9, 2);
+        phoneFormatHome(value, field) {
+            if (this.value !== '') {
+                this[field] = this[field].replace(new RegExp('\\D+', 'g'), '');
+                var p1 = this[field].substr(0, 2);
+                var p2 = this[field].substr(2, 2);
+                var p3 = this[field].substr(4, 3);
                 if (p2.length > 0) {
-                    this.phoneSpare = '+7(' + p1 + ')' + p2 + '-' + p3 + '-' + p4;
-                } else if (p1.length > 0) {
-                    this.phoneSpare = '+7(' + p1;
-                } else {
-                    this.phoneSpare = '+7';
-                }
-            }
-        },
-        phoneFormatHome() {
-            if (this.phoneHome !== '') {
-                this.phoneHome = this.phoneHome.replace(new RegExp('\\D+', 'g'), '');
-                var p1 = this.phoneHome.substr(0, 2);
-                var p2 = this.phoneHome.substr(2, 2);
-                var p3 = this.phoneHome.substr(4, 3);
-                if (p2.length > 0) {
-                    this.phoneHome = p1 + '-' + p2 + '-' + p3;
+                    this[field] = p1 + '-' + p2 + '-' + p3;
                 } else if (p1.length > 3) {
-                    this.phoneHome = p1 + p2;
+                    this[field] = p1 + p2;
                 } else {
-                    this.phoneHome = p1;
+                    this[field] = p1;
                 }
             }
         }
@@ -146,15 +132,12 @@ export default {
             this.dataCommon()
         },
         phone: function (val) {
-            this.phoneFormat()
             this.dataCommon()
         },
         phoneHome: function (val) {
-            this.phoneFormatHome()
             this.dataCommon()
         },
         phoneSpare: function (val) {
-            this.phoneSpareFormat()
             this.dataCommon()
         }
     },

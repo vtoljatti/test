@@ -16,9 +16,9 @@ class CreateVillageTable extends Migration
         Schema::create('villages', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->index()->comment('Название');
-                $table->integer('price')->comment('Стоимость');
+                $table->integer('price')->default(0)->comment('Стоимость');
                 $table->integer('city_id')->index()->comment('ID города');
-                $table->integer('is_hidden');
+                $table->integer('is_hidden')->default(0)->comment('Скрытый');
                 $table->timestamps();
         });
     }

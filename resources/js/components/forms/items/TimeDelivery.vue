@@ -12,6 +12,7 @@
                         v-model="beforeAfter"
                         :options="beforeAfterOptions"
                         size="sm"
+                        @change="asdf($event)"
                     />
                 </b-col>
                 <b-col>
@@ -21,6 +22,7 @@
                         @context="onTimeData"
                         minutes-step="10"
                         hide-header
+                        @input="asdf($event)"
                     />
                 </b-col>
             </b-row>
@@ -37,12 +39,15 @@ export default {
             timeData: null,
             beforeAfter: 0,
             beforeAfterOptions: [
-                { value: '0', text: 'До' },
-                { value: '1', text: 'После' }
+                { value: 0, text: 'До' },
+                { value: 1, text: 'После' }
             ]
         }
     },
     methods: {
+        asdf(e) {
+            this.timeValue = this.timeValue.substring(0, this.timeValue.length - 1) + this.beforeAfter
+        },
         onTimeData(ctx) {
             this.timeData = ctx
         },
@@ -54,13 +59,13 @@ export default {
         }
     },
     watch: {
-        timeValue: function (val) {
+        timeValue(val) {
             this.dataCommon()
         },
-        beforeAfterOptions: function (val) {
+        beforeAfterOptions(val) {
             this.dataCommon()
         },
-        beforeAfter: function (val) {
+        beforeAfter(val) {
             this.dataCommon()
         }
     },

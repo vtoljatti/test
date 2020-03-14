@@ -12,9 +12,14 @@ const router = new VueRouter({
             component: Index
         },
         {
-            path: '/readme',
-            name: 'Readme',
-            component: () => import('./views/Readme')
+            path: '/acts',
+            name: 'Acts',
+            component: () => import('./views/Acts')
+        },
+        {
+            path: '/users',
+            name: 'Users',
+            component: () => import('./views/Users')
         }
     ]
 });
