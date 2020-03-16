@@ -19,6 +19,22 @@ export default {
         Menu,
         Footer,
         Notifications
+    },
+
+    computed: {
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
+        },
+    },
+
+    beforeMount() {
+        this.$store.dispatch('users/getAuthUser');
     }
 }
 </script>
+
+<style>
+    .bg-filter {
+        background: #eeeeee;
+    }
+</style>

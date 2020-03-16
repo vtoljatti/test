@@ -19,6 +19,7 @@ class StreetsResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'city_id' => $this->city_id,
+            'district_id' => $this->district_id,
             'is_hidden' => $this->is_hidden,
         ];
     }

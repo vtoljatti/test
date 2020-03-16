@@ -26,7 +26,7 @@ export default {
 <style lang="scss">
 .notifications {
     position: fixed;
-    top: .5rem;
+    bottom: .5rem;
     right: .5rem;
     width: 300px;
     max-width: 100%;

@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import users from './modules/users'
 import cities from './modules/cities'
+import districts from './modules/districts'
+import streets from './modules/streets'
+import villages from './modules/villages'
 import acts from './modules/acts'
 import others from './modules/others'
 import sellers from './modules/sellers'
@@ -15,6 +18,9 @@ export default new Vuex.Store({
     modules: {
         users,
         cities,
+        districts,
+        streets,
+        villages,
         acts,
         others,
         sellers,

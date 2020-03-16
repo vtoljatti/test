@@ -4,7 +4,7 @@
             <b-row class="justify-content-center pb-3">
                 <b-col class="justify-content-center text-md-left text-center">
                     <strong class="text-muted h5 font-weight-normal">
-                        Главная
+                        Статистика водителей
                     </strong>
                 </b-col>
                 <b-col class="justify-content-center text-md-right text-center">
@@ -13,7 +13,7 @@
             </b-row>
 
             <div class="p-3 justify-content-left text-left bg-filter">
-                Тут будут графики, последние изменения, ну короче вся нужная информация
+                Тут будет статистика водителей
             </div>
 
         </div>
@@ -24,18 +24,18 @@
 </template>
 
 <script>
-import Page401 from "./401";
+    import Page401 from "./401";
 
-export default {
+    export default {
 
-    components: {
-        Page401
-    },
+        components: {
+            Page401
+        },
 
-    computed: {
-        authUser() {
-            return this.$store.getters['users/authUser'] || []
+        computed: {
+            authUser() {
+                return this.$store.getters['users/authUser'] || []
+            }
         }
     }
-}
 </script>

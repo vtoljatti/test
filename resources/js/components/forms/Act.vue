@@ -27,7 +27,7 @@
                             <CostDelivery :data='dataCostDeliveryMethod' />
                         </b-col>
                         <b-col xl="4" lg="6" md="6" class="">
-                            <AddressClient :data='dataAddressClientMethod' />
+                            <AddressClient :data='dataAddressClientMethod' :district="main.dataCityDelivery" />
                             <ContactClient :data='dataContactClientMethod' />
                             <CommentClient :data='dataCommentClientMethod' />
                         </b-col>
@@ -135,3 +135,39 @@
         }
     }
 </script>
+
+<!--$table->date('date')->index()->comment('Дата');-->
+<!--$table->time('time')->index()->comment('Время');-->
+<!--$table->integer('number_sales_1')->index()->comment('Номер продажи 1');-->
+<!--$table->integer('number_sales_2')->default(0)->index()->comment('Номер продажи 2');-->
+<!--$table->integer('number_sales_3')->default(0)->index()->comment('Номер продажи 3');-->
+<!--$table->string('city', 100)->comment('Город');-->
+<!--$table->integer('city_id')->default(0)->comment('ID города');-->
+<!--$table->integer('district_id')->default(0)->comment('ID района');-->
+
+<!--$table->boolean('is_to_bring')->default(false)->comment('Довоз');-->
+<!--$table->boolean('is_exchange')->default(false)->comment('Обмен');-->
+
+<!--$table->string('street', 100)->comment('Улица');-->
+<!--$table->integer('street_id')->default(0)->comment('ID улицы');-->
+
+<!--$table->string('home', 100)->nullable()->comment('Дом');-->
+<!--$table->string('apartment', 100)->nullable()->comment('Квартира/офис');-->
+<!--$table->string('porch', 100)->nullable()->comment('Подъезд');-->
+
+<!--$table->string('last_name', 100)->nullable()->comment('Имя клиента');-->
+<!--$table->string('phone_1', 20)->nullable()->index()->comment('Телефон 1');-->
+<!--$table->string('phone_2', 20)->nullable()->index()->comment('Телефон 2');-->
+<!--$table->string('phone_3', 20)->nullable()->index()->comment('Телефон 3');-->
+
+<!--$table->boolean('is_dialing')->default(false)->comment('Дозвон');-->
+<!--$table->integer('time_dialing')->default(0)->comment('Дозвон через');-->
+
+<!--$table->boolean('is_lift_up')->default(false)->comment('Подъем');-->
+<!--$table->boolean('is_questionable')->default(false)->comment('Возможен');-->
+<!--$table->boolean('is_elevator')->default(false)->comment('Лифт');-->
+<!--$table->integer('floor')->default(0)->comment('Этаж');-->
+<!--$table->string('comment')->nullable()->comment('Комментарий');-->
+
+<!--$table->integer('seller_id')->comment('ID Продавца');-->
+<!--$table->integer('driver_id')->default(0)->comment('ID Продавца');-->

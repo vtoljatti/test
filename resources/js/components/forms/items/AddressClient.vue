@@ -19,9 +19,10 @@
                         size="sm"
                     />
                 </label>
+
                 <datalist id="list-streets">
                     <b-row>
-                        <b-col v-for="street in allStreets">
+                        <b-col v-for="street in streetsDistrict">
                             <option>{{ street.name }}</option>
                         </b-col>
                     </b-row>
@@ -66,20 +67,35 @@
 
 <script>
 export default {
-    props: ['data'],
+    props: ['data', 'district'],
+
     data() {
         return {
             street: null,
             home: null,
             apartment: null,
-            porch: null
+            porch: null,
         }
     },
+
     computed: {
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
+        },
         allStreets() {
-            return this.$store.getters['cities/allStreets']
-        }
+            return this.$store.getters['streets/allStreetsCity'] || []
+        },
+
+        // Меняем список улиц в зависимости от района
+        streetsDistrict() {
+            if (this.district.districtId) {
+                let [...streets] = this.allStreets
+                return streets.filter(street => street.district_id === this.district.districtId)
+            }
+            return []
+        },
     },
+
     methods: {
         dataCommon() {
             this.data({
@@ -90,27 +106,32 @@ export default {
             })
         }
     },
+
     watch: {
         street: function (val) {
             this.dataCommon()
         },
+
         home: function (val) {
             this.dataCommon()
         },
+
         apartment: function (val) {
             this.dataCommon()
         },
+
         porch: function (val) {
             this.dataCommon()
         }
     },
+
     created() {
         this.dataCommon();
     },
+
     beforeMount() {
-        if (this.allStreets.length === 0) {
-            this.$store.dispatch('cities/getAllStreets')
-            console.log('Загружены данные cities/getAllStreets')
+        if (!this.allStreets.length) {
+            this.$store.dispatch('streets/getAllStreetsCity', this.authUser.city_id)
         }
     }
 }

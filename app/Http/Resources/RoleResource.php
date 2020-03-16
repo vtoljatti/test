@@ -18,6 +18,7 @@ class RoleResource extends JsonResource
             'id' => $this->id,
             'role' => $this->role,
             'name' => $this->name,
+            'variant' => $this->variant,
         ];
     }
 }

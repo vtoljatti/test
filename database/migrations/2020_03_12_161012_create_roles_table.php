@@ -15,8 +15,10 @@ class CreateRolesTable extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('role')->index()->comment('Роль');
-            $table->string('name')->index()->comment('Название');
+            $table->string('role', 50)->index()->comment('Роль');
+            $table->string('name', 50)->comment('Название');
+            $table->string('variant', 50)->index()->comment('Class стиля');
+            $table->integer('is_hidden')->default(0)->comment('Скрытый');
             $table->timestamps();
         });
     }

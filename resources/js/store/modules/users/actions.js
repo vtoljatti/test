@@ -1,3 +1,17 @@
+const getAuthUser = ({ commit }) => {
+    axios.get('/api/users/auth')
+        .then(res => commit('SET_AUTH_USER', res.data.user))
+        .catch(err => console.error(err))
+};
+
+const logout = () => {
+    axios.post('/logout')
+        .then(res => {
+            window.location.reload()
+        })
+        .catch(err => console.log(err))
+};
+
 const getAllUsers = ({ commit }) => {
     axios.get('/api/users/')
         .then(res => commit('SET_ALL_USERS', res.data.users))
@@ -8,10 +22,38 @@ const addNewUser = ({ dispatch }, user) => {
     return new Promise((resolve, reject) => {
         axios.post('/api/users/store', user)
             .then(res => {
-                dispatch('getAllUsers')
-                resolve()
+                if (res.data.success) {
+                    dispatch('getAllUsers')
+                    resolve(res.data.message)
+                } else {
+                    const errorResponse = err.response.data.errors ?? false
+                    let errors = []
+
+                    for (const key in errorResponse) {
+                        errorResponse[key].forEach(reason => errors.push(reason))
+                    }
+
+                    reject(errors)
+                }
             })
-            .catch(err => reject(new Error('Can`t save user')))
+            .catch(err => {
+                let errors = []
+                let message
+
+                if (err.response.data.errors) {
+                    const errorResponse = err.response.data.errors
+
+                    for (const key in errorResponse) {
+                        errorResponse[key].forEach(reason => errors.push(reason))
+                    }
+                    reject(errors)
+
+                } else {
+                    message = err.response.data.message ?? false
+                    reject(message)
+                }
+
+            })
     })
 }
 
@@ -63,6 +105,8 @@ const updateUser = ({ dispatch }, user) => {
 }
 
 export {
+    getAuthUser,
+    logout,
     getAllUsers,
     addNewUser,
     getOneUserById,

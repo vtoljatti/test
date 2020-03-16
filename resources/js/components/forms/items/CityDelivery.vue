@@ -29,13 +29,13 @@
                     </b-form-radio>
                 </b-form-radio-group>
 
-                <div v-if="this.allDistricts.length === 0" class="text-center">
+                <div v-if="this.allDistrictsCity.length === 0" class="text-center">
                     <b-spinner type="grow" label="Loading..."></b-spinner>
                 </div>
                 <div v-else>
                     <b-form-group class="pt-3 mb-0" v-if="cityId != 0">
                         <b-form-radio
-                            v-for="district in allDistricts"
+                            v-for="district in allDistrictsCity"
                             v-model="districtId"
                             :value="district.id"
                             required
@@ -59,7 +59,7 @@
                 <datalist id="list-villages">
                     <b-row>
                         <b-col>
-                            <option v-for="village in allVillages">{{ village.name }}</option>
+                            <option v-for="village in allVillagesCity">{{ village.name }}</option>
                         </b-col>
                     </b-row>
                 </datalist>
@@ -89,12 +89,15 @@ export default {
         }
     },
     computed: {
-        allVillages() {
-            return this.$store.getters['cities/allVillages']
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
         },
-        allDistricts() {
-            return this.$store.getters['cities/allDistricts']
-        }
+        allVillagesCity() {
+            return this.$store.getters['villages/allVillagesCity'] || []
+        },
+        allDistrictsCity() {
+            return this.$store.getters['districts/allDistrictsCity'] || []
+        },
     },
     methods: {
         dataCommon() {
@@ -125,15 +128,12 @@ export default {
     created() {
         this.dataCommon()
     },
-    beforeMount() {
-        if (this.allVillages.length === 0) {
-            this.$store.dispatch('cities/getAllVillages');
-            console.log('Загружены данные cities/getAllVillages')
+    mounted() {
+        if (!this.allVillagesCity.length) {
+            this.$store.dispatch('villages/getAllVillagesCity', this.authUser.city_id);
         }
-
-        if (this.allDistricts.length === 0) {
-            this.$store.dispatch('cities/getAllDistricts');
-            console.log('Загружены данные cities/getAllDistricts')
+        if (!this.allDistrictsCity.length) {
+            this.$store.dispatch('districts/getAllDistrictsCity', this.authUser.city_id);
         }
     }
 }
