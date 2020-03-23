@@ -4,6 +4,12 @@ const getAllSellers = ({ commit }) => {
         .catch(err => console.error(err))
 };
 
+const getAllSellersCity = ({ commit }, cityId) => {
+    axios.get(`/api/cities/${cityId}/sellers`)
+        .then(res => commit('SET_ALL_SELLERS_CITY', res.data.sellers))
+        .catch(err => console.error(err))
+}
+
 const getOneSellerById = ({}, sellerId) => {
     return new Promise((resolve, reject) => {
         axios.get(`/api/sellers/${sellerId}`)
@@ -94,5 +100,6 @@ export {
     getAllSellers,
     getOneSellerById,
     addNewSeller,
-    updateSeller
+    updateSeller,
+    getAllSellersCity
 }

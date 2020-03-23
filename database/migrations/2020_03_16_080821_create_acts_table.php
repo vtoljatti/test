@@ -26,9 +26,9 @@ class CreateActsTable extends Migration
 
             $table->boolean('is_to_bring')->default(false)->comment('Довоз');
             $table->boolean('is_exchange')->default(false)->comment('Обмен');
+            $table->integer('cost')->comment('Стоимость');
 
             $table->string('street', 100)->comment('Улица');
-            $table->integer('street_id')->default(0)->comment('ID улицы');
 
             $table->string('home', 100)->nullable()->comment('Дом');
             $table->string('apartment', 100)->nullable()->comment('Квартира/офис');
@@ -48,8 +48,11 @@ class CreateActsTable extends Migration
             $table->integer('floor')->default(0)->comment('Этаж');
             $table->string('comment')->nullable()->comment('Комментарий');
 
+            $table->integer('user_id')->comment('ID Пользователя');
             $table->integer('seller_id')->comment('ID Продавца');
             $table->integer('driver_id')->default(0)->comment('ID Продавца');
+            $table->integer('act_city_id')->default(0)->comment('ID Города');
+            $table->boolean('is_hidden')->default(0)->comment('Скрыто');
 
             $table->timestamps();
         });

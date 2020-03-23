@@ -18,6 +18,7 @@ class UpdateUsersTable extends Migration
             $table->integer('seller_id')->nullable()->after('email')->comment('ID продавца');
             $table->integer('district_id')->index()->after('email')->comment('ID района');
             $table->integer('city_id')->index()->after('email')->comment('ID города');
+            $table->string('city')->after('email')->comment('Город');
             $table->string('address')->nullable()->after('email')->comment('Адрес');
             $table->string('phone')->nullable()->after('email')->comment('Телефон');
             $table->string('short_name')->after('email')->comment('Короткое имя');
@@ -37,6 +38,7 @@ class UpdateUsersTable extends Migration
             $table->dropColumn('seller_id');
             $table->dropColumn('district_id');
             $table->dropColumn('city_id');
+            $table->dropColumn('city');
             $table->dropColumn('address');
             $table->dropColumn('phone');
             $table->dropColumn('short_name');

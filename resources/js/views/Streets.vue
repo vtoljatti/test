@@ -9,18 +9,28 @@
                 </b-col>
                 <b-col class="justify-content-center text-md-right text-center">
 
-                    <b-button size="sm" @click="openModalStreet(0)" class="rounded-circle" variant="outline-success" v-b-tooltip.hover placement="bottom" title="Новый пользователь">
+                    <b-button size="sm"
+                              @click="openModalStreet(0)"
+                              class="rounded-circle"
+                              variant="outline-success"
+                              v-b-tooltip.hover
+                              placement="bottom"
+                              title="Новый пользователь"
+                    >
                         <i class="fa fa-plus"></i>
                     </b-button>
 
-                    <ModalStreet v-if="showCreateStreetModal" @closeForm="closeModalStreet" :street-id="editableStreetId" />
+                    <ModalStreet v-if="showCreateStreetModal"
+                                 @closeForm="closeModalStreet"
+                                 :street-id="editableStreetId"
+                    />
 
                 </b-col>
             </b-row>
 
             <b-row class="p-3 justify-content-left text-left bg-filter">
                 <b-col xl="3" lg="3" md="4" class="my-1 justify-content-center">
-                    <b-form-input type="search" v-model="searchText" @change="searchByText" placeholder="Поиск"/>
+                    <b-form-input type="search" v-model="searchText" @input="searchByText($event)" placeholder="Поиск"/>
                 </b-col>
 
                 <b-col xl="3" lg="3" md="4" class="my-1 justify-content-center">
@@ -58,7 +68,6 @@
 
             <div v-else v-for="street in completedStreetsList" class="border-bottom">
                 <b-row class="py-3 mx-1 justify-content-center text-left">
-
                     <b-col xl="4" lg="4" md="4" class="justify-content-center text-md-left text-center order-md-1 order-2">
                         <div><small class="text-muted">#{{ street.id }}</small>
                             <strong>{{ street.name }}</strong>
@@ -86,10 +95,8 @@
                             <i class="fa fa-ellipsis-v"></i>
                         </b-button>
                     </b-col>
-
                 </b-row>
             </div>
-
         </div>
         <div v-else>
             <Page401 />
@@ -104,7 +111,6 @@
     import { debounce } from 'lodash'
 
     export default {
-
         components: {
             Page401,
             ModalStreet,
@@ -126,17 +132,14 @@
                 return this.$store.getters['users/authUser'] || []
             },
 
-            // Берем Улицы
             allStreets() {
                 return this.$store.getters['streets/allStreets'] || []
             },
 
-            // Берем Города
             allCities() {
                 return this.$store.getters['cities/allCities'] || []
             },
 
-            // Берем Районы
             allDistricts() {
                 return this.$store.getters['districts/allDistricts'] || []
             },
@@ -178,8 +181,8 @@
                 })
             }
         },
-        methods: {
 
+        methods: {
             // Получаем экшены
             ...mapActions({
                 getAllCities: 'cities/getAllCities',
@@ -199,9 +202,9 @@
                 this.editableStreetId = null
             },
 
-            searchByText: debounce(function() {
-                // разобраться
-            }, 5000),
+            searchByText: debounce(function(searchText) {
+                this.searchText = searchText
+            }, 200),
 
             // Название города по id
             cityName(cityId) {
@@ -221,6 +224,8 @@
         },
 
         beforeMount() {
+            this.$store.dispatch('users/getAuthUser');
+
             // Загружаем в store улицы
             if (!this.allStreets.length) {
                 this.$store.dispatch('streets/getAllStreets');

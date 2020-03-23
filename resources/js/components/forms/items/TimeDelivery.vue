@@ -31,8 +31,11 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data'],
+
     data() {
         return {
             timeValue: '14:00:00',
@@ -44,13 +47,16 @@ export default {
             ]
         }
     },
+
     methods: {
         asdf(e) {
             this.timeValue = this.timeValue.substring(0, this.timeValue.length - 1) + this.beforeAfter
         },
+
         onTimeData(ctx) {
             this.timeData = ctx
         },
+
         dataCommon() {
             this.data({
                 time: this.timeValue,
@@ -58,17 +64,34 @@ export default {
             })
         }
     },
+
+    computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal',
+        }),
+    },
+
     watch: {
+        dataModal: function (val) {
+            this.timeValue = this.dataModal.act.time;
+            this.beforeAfter = this.dataModal.act.time.slice(-1);
+
+            this.dataCommon()
+        },
+
         timeValue(val) {
             this.dataCommon()
         },
+
         beforeAfterOptions(val) {
             this.dataCommon()
         },
+
         beforeAfter(val) {
             this.dataCommon()
         }
     },
+
     created() {
         this.dataCommon()
     }

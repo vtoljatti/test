@@ -8,6 +8,7 @@
             </div>
             <div class="pt-1">
                 <b-calendar
+                    block
                     v-model="dateValue"
                     @context="onDateData"
                     :dateFormatOptions="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
@@ -44,8 +45,11 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data'],
+
     data() {
         return {
             dateValue: '',
@@ -57,16 +61,26 @@ export default {
             dateAfterTomorrowActive: '',
         }
     },
+
+    computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal',
+        }),
+    },
+
     methods: {
         onDateData(ctx) {
             this.dateData = ctx
         },
+
         setTomorrow() {
             this.dateValue = this.dateTomorrow;
         },
+
         setAfterTomorrow() {
             this.dateValue = this.dateAfterTomorrow;
         },
+
         setDate(field, addDay = 0) {
             this[field] = new Date(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + addDay));
             let d = this[field].getDate();
@@ -74,6 +88,7 @@ export default {
             let y = this[field].getFullYear();
             this[field] = y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
         },
+
         dataCommon() {
             this.data({
                 date: this.dateData.selectedYMD ?? '',
@@ -81,10 +96,18 @@ export default {
             })
         },
     },
+
     watch: {
+        dataModal: function (val) {
+            this.dateValue = this.dataModal.act.date;
+
+            this.dataCommon()
+        },
+
         dateData: function (val) {
             this.dataCommon()
         },
+
         dateValue: function (val) {
             if (this.dateValue === this.dateTomorrow) {
                 this.dateTomorrowActive = true
@@ -98,6 +121,7 @@ export default {
             }
         }
     },
+
     created() {
         this.setTomorrow();
         this.setAfterTomorrow();

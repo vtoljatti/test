@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\City;
 use App\District;
+use App\Http\Resources\SellerResource;
+use App\Http\Resources\UserResource;
 use App\Http\Resources\VillagesResource;
+use App\Seller;
 use App\Streets;
 use App\Http\Resources\DistrictResource;
 use App\Http\Resources\CityResource;
 use App\Http\Resources\StreetsResource;
+use App\User;
 use App\Village;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +105,19 @@ class CitiesController extends Controller
     {
         return response()->json([
             'districts' => DistrictResource::collection(District::where('city_id', $request->id)->get()),
+        ]);
+    }
+
+    /**
+     * Получаем продавцов города
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sellersCity(Request $request)
+    {
+        return response()->json([
+            'sellers' => SellerResource::collection(Seller::where('city_id', $request->id)->get()),
         ]);
     }
 

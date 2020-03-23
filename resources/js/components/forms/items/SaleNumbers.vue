@@ -8,13 +8,13 @@
             </div>
             <div class="p-1 pt-2 d-flex justify-content-between align-items-center">
                 <b-form-input
+                    :class="{'border-danger': !isValidate}"
                     type="number"
                     class="text-center"
                     v-model="salesNumber1"
                     placeholder="000001"
                     min="0"
                     :has-counter="false"
-                    required
                     size="sm"
                 />
                 <b-form-input
@@ -41,31 +41,57 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data'],
+
     data() {
         return {
+            isValidate: false,
             salesNumber1: '',
             salesNumber2: '',
             salesNumber3: '',
             max: 5,
         }
     },
+
     methods: {
-        asdf(e) {
-           e.preventDefault()
+        validate() {
+            if (!this.salesNumber1) {
+                this.isValidate = false
+            } else {
+                this.isValidate = true
+            }
         },
 
         dataCommon() {
             this.data({
                 salesNumber1: this.salesNumber1,
                 salesNumber2: this.salesNumber2,
-                salesNumber3: this.salesNumber3
+                salesNumber3: this.salesNumber3,
+                isValidate: this.isValidate
             })
         }
     },
+
+    computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal'
+        }),
+    },
+
     watch: {
+        dataModal: function (val) {
+            this.salesNumber1 = this.dataModal.act.number_sales_1;
+            this.salesNumber2 = this.dataModal.act.number_sales_2;
+            this.salesNumber3 = this.dataModal.act.number_sales_3;
+            this.validate()
+            this.dataCommon()
+        },
+
         salesNumber1: function (val) {
+            this.validate()
             this.dataCommon()
         },
         salesNumber2: function (val) {
@@ -75,7 +101,9 @@ export default {
             this.dataCommon()
         }
     },
-    created() {
+
+    beforeMount() {
+        this.validate()
         this.dataCommon()
     }
 }

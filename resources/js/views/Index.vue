@@ -36,6 +36,10 @@ export default {
         authUser() {
             return this.$store.getters['users/authUser'] || []
         }
+    },
+
+    beforeMount() {
+        this.$store.dispatch('users/getAuthUser');
     }
 }
 </script>

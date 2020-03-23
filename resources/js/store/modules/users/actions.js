@@ -1,7 +1,11 @@
 const getAuthUser = ({ commit }) => {
     axios.get('/api/users/auth')
         .then(res => commit('SET_AUTH_USER', res.data.user))
-        .catch(err => console.error(err))
+        .catch(err => {
+            console.error(err)
+            window.location.reload()
+            commit('SET_AUTH_USER', [])
+        })
 };
 
 const logout = () => {

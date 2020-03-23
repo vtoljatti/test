@@ -1,6 +1,6 @@
 const getAllCities = ({ commit }) => {
     axios.get('/api/cities/')
-        .then(res => commit('SET_ALL_CITIES', res.data.cities))
+        .then(res => commit('CITIES', res.data.cities))
         .catch(err => console.error(err))
 };
 

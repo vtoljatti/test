@@ -97,6 +97,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data'],
 
@@ -127,7 +129,25 @@ export default {
         }
     },
 
+    computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal'
+        })
+    },
+
     watch: {
+        dataModal: function (val) {
+            this.comment =  this.dataModal.act.comment;
+            this.dialing =  this.dataModal.act.is_dialing;
+            this.dialingTime =  this.dataModal.act.time_dialing;
+            this.liftUp =  this.dataModal.act.is_lift_up;
+            this.elevator =  this.dataModal.act.is_elevator;
+            this.floor =  this.dataModal.act.floor;
+            this.questionable =  this.dataModal.act.is_questionable;
+
+            this.dataCommon()
+        },
+
         comment: function (val) {
             this.dataCommon()
         },

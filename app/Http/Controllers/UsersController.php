@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\City;
 use App\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class UsersController extends Controller
     public function auth()
     {
         return response()->json([
+            'success' => true,
             'user' => new UserResource(User::where('id', Auth::user()->id)->firstOrFail()),
         ]);
     }
@@ -87,6 +89,7 @@ class UsersController extends Controller
         $user->short_name = $request['short_name'];
         $user->email = $request['email'];
         $user->city_id = $request['city_id'];
+        $user->city = City::where('id', $request['city_id'])->first()->name ?? '';
         $user->phone = $request['phone'] ?? '';
         $user->address = $request['address'] ?? '';
         $user->district_id = $request['district_id'] ?? 0;
@@ -159,6 +162,7 @@ class UsersController extends Controller
         $user->short_name = $request['short_name'];
         $user->email = $request['email'];
         $user->city_id = $request['city_id'];
+        $user->city = City::where('id', $request['city_id'])->first()->name ?? '';
         $user->phone = $request['phone'] ?? '';
         $user->address = $request['address'] ?? '';
         $user->district_id = $request['district_id'] ?? 0;

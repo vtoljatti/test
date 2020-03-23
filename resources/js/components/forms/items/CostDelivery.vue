@@ -29,8 +29,6 @@
                     <b-form-checkbox
                         v-model="isFree"
                         name="is_free"
-                        value="1"
-                        unchecked-value="0"
                         switch
                     >
                         Бесплатно
@@ -40,13 +38,13 @@
                     <b-input-group>
                         <b-input-group size="sm" append="руб.">
                             <b-form-input
+                                :class="{'border-danger': !isValidate}"
                                 class="text-center"
                                 type="number"
                                 v-model="cost"
                                 placeholder="Стоимость"
                                 min="0"
                                 maxlength="6"
-                                required
                                 size="sm"
                             />
                         </b-input-group>
@@ -59,56 +57,89 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data'],
+
     data() {
         return {
+            isValidate: false,
             toBring: 0,
             exchange: 0,
-            isFree: 0,
+            isFree: false,
             cost: null
         }
     },
+
     methods: {
+        validate() {
+            if (this.cost > 0 || this.isFree === true) {
+                this.isValidate = true
+            } else {
+                this.isValidate = false
+            }
+        },
+
         dataCommon() {
             this.data({
                 toBring: this.toBring,
                 exchange: this.exchange,
                 isFree: this.isFree,
-                cost: this.cost
+                cost: this.cost,
+                isValidate: this.isValidate
             })
-        },
-        clickIsFree() {
-             if (this.isFree === '0') {
-                this.cost = 0
-            }
         }
     },
+
+    computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal'
+        })
+    },
+
     watch: {
+        dataModal: function (val) {
+            this.toBring =  this.dataModal.act.is_to_bring;
+            this.exchange =  this.dataModal.act.is_exchange;
+            this.cost =  this.dataModal.act.cost;
+            this.isFree =  this.dataModal.act.cost > 0 ? false : true;
+
+            this.validate()
+            this.dataCommon()
+        },
+
         toBring: function (val) {
             this.dataCommon()
         },
+
         exchange: function (val) {
             this.dataCommon()
         },
+
         isFree: function (val) {
-            this.dataCommon()
-            if (this.isFree === '1') {
+            if (this.isFree === true) {
                 this.cost = 0
             } else {
                 if (this.cost === 0) {
                     this.cost = ''
                 }
             }
-        },
-        cost: function (val) {
+            this.validate()
             this.dataCommon()
+        },
+
+        cost: function (val) {
             if (this.cost > 0) {
-                this.isFree = 0
+                this.isFree = false
             }
+            this.validate()
+            this.dataCommon()
         }
     },
+
     created() {
+        this.validate()
         this.dataCommon()
     }
 }

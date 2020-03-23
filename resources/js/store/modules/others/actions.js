@@ -4,6 +4,11 @@ const getAllRoles = ({ commit }) => {
         .catch(err => console.error(err))
 };
 
+const setDataModal = ({ commit }, data) => {
+    commit('SET_DATA_MODAL', data)
+}
+
 export {
-    getAllRoles
+    getAllRoles,
+    setDataModal
 }

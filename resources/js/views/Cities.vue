@@ -9,7 +9,14 @@
                 </b-col>
                 <b-col class="justify-content-center text-md-right text-center">
 
-                    <b-button size="sm" @click="openModalCity(0)" class="rounded-circle" variant="outline-success" v-b-tooltip.hover placement="bottom" title="Новый пользователь">
+                    <b-button size="sm"
+                              @click="openModalCity(0)"
+                              class="rounded-circle"
+                              variant="outline-success"
+                              v-b-tooltip.hover
+                              placement="bottom"
+                              title="Новый пользователь"
+                    >
                         <i class="fa fa-plus"></i>
                     </b-button>
 
@@ -20,7 +27,7 @@
 
             <b-row class="p-3 justify-content-left text-left bg-filter">
                 <b-col xl="3" lg="3" md="4" class="my-1 justify-content-center">
-                    <b-form-input type="search" v-model="searchText" placeholder="Поиск"/>
+                    <b-form-input type="search" v-model="searchText" @input="searchByText($event)" placeholder="Поиск"/>
                 </b-col>
 
                 <b-col xl="6" lg="6" md="6" class="my-1 justify-content-center"></b-col>
@@ -142,13 +149,17 @@
                 })
             }
         },
-        methods: {
 
-            // // Получаем экшены
+        methods: {
+            // Получаем экшены
             ...mapActions({
                 getAllCities: 'cities/getAllCities',
                 showNotify: 'notifications/showNotify'
             }),
+
+            searchByText: debounce(function(searchText) {
+                this.searchText = searchText
+            }, 200),
 
             // Добавляем данные при открытии модального окна
             openModalCity(id = null) {
@@ -161,15 +172,15 @@
                 this.showCreateCityModal = false
                 this.editableCityId = null
             },
-
         },
 
         beforeMount() {
+            this.$store.dispatch('users/getAuthUser');
 
             // Загружаем в store города
             if (!this.allCities.length) {
                 this.getAllCities()
             }
-        },
+        }
     }
 </script>

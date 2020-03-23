@@ -3,10 +3,10 @@ import * as mutations from './mutations'
 import * as getters from './getters'
 
 const state = {
-    streets: [],
-    districts: [],
-    villages: [],
-    act: [{'qwe': 2}]
+    pickedDay: '',
+    formAct: [],
+    listActs: [],
+    filterActs: []
 }
 
 export default {

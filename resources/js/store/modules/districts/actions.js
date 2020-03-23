@@ -4,12 +4,6 @@ const getAllDistricts = ({ commit }) => {
         .catch(err => console.error(err))
 };
 
-// const getAllDistrictsCity = ({ commit }) => {
-//     axios.get('/api/cities/1/districts')
-//         .then(res => commit('SET_ALL_DISTRICTS_CITY', res.data.districts))
-//         .catch(err => console.error(err))
-// };
-
 const getAllDistrictsCity = ({ commit }, cityId) => {
     axios.get(`/api/cities/${cityId}/districts`)
         .then(res => commit('SET_ALL_DISTRICTS_CITY', res.data.districts))

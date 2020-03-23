@@ -29,7 +29,9 @@
                                     v-model="name"
                                     placeholder="Имя"
                                 />
-                                <small v-if="validateNameMessage" class="text-danger font-weight-bold">{{ validateNameMessage }}</small>
+                                <small v-if="validateNameMessage" class="text-danger font-weight-bold">
+                                    {{ validateNameMessage }}
+                                </small>
                             </label>
                         </b-col>
 
@@ -43,7 +45,9 @@
                                     v-model="short_name"
                                     placeholder="Короткое имя"
                                 />
-                                <small v-if="validateShortNameMessage" class="text-danger font-weight-bold">{{ validateShortNameMessage }}</small>
+                                <small v-if="validateShortNameMessage" class="text-danger font-weight-bold">
+                                    {{ validateShortNameMessage }}
+                                </small>
                             </label>
                         </b-col>
                     </b-row>
@@ -59,7 +63,9 @@
                                     v-model="email"
                                     placeholder="Email"
                                 />
-                                <small v-if="validateEmailMessage" class="text-danger font-weight-bold">{{ validateEmailMessage }}</small>
+                                <small v-if="validateEmailMessage" class="text-danger font-weight-bold">
+                                    {{ validateEmailMessage }}
+                                </small>
                             </label>
                         </b-col>
 
@@ -188,7 +194,6 @@
 import { mapActions } from 'vuex'
 
 export default {
-
     props: {
       userId: {
           type: Number,
@@ -211,7 +216,6 @@ export default {
         password: '',
         password_confirmation: '',
         isEditMode: false,
-
         isValidate: false,
         validateName: false,
         validateNameMessage: false,
@@ -227,7 +231,6 @@ export default {
         validatePasswordMessage: false,
         validatePasswordConfirmation: false,
         validatePasswordConfirmationMessage: false,
-
         messageRequiredField: 'Поле обязательно для заполнения'
     }),
 
@@ -235,15 +238,19 @@ export default {
         authUser() {
             return this.$store.getters['users/authUser'] || []
         },
+
         allCities() {
             return this.$store.getters['cities/allCities'] || []
         },
+
         allDistricts() {
             return this.$store.getters['districts/allDistricts'] || []
         },
+
         allRoles() {
             return this.$store.getters['others/allRoles'] || []
         },
+
         allSellers() {
             return this.$store.getters['sellers/allSellers'] || []
         },
@@ -559,28 +566,23 @@ export default {
     },
 
     mounted() {
-
         // Запрещаем закрытие модального окна по заднему фону
         this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
             if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
         })
 
-        // Загружаем в store города
         if (!this.allCities.length) {
             this.$store.dispatch('cities/getAllCities');
         }
 
-        // Загружаем в store районы
         if (!this.allDistricts.length) {
             this.$store.dispatch('districts/getAllDistricts');
         }
 
-        // Загружаем в store роли
         if (!this.allRoles.length) {
             this.$store.dispatch('others/getAllRoles');
         }
 
-        // Загружаем в store продавцов
         if (!this.allSellers.length) {
             this.$store.dispatch('sellers/getAllSellers');
         }

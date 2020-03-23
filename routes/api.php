@@ -29,6 +29,14 @@ Route::middleware('auth:api')->group(function () {
 //        });
 //    });
 
+    Route::group(['prefix'=>'acts'], function () {
+        Route::get('/', 'ActsController@index');
+        Route::post('/store', 'ActsController@store');
+        Route::post('/update', 'ActsController@update');
+        Route::get('/{date}', 'ActsController@actsDay');
+        Route::get('/edit/{id}', 'ActsController@act');
+    });
+
     Route::group(['prefix'=>'cities'], function () {
         Route::get('/', 'CitiesController@index');
         Route::post('/store', 'CitiesController@store');
@@ -37,6 +45,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{id}/districts', 'CitiesController@districtsCity');
         Route::get('/{id}/streets', 'CitiesController@streetsCity');
         Route::get('/{id}/villages', 'CitiesController@villagesCity');
+        Route::get('/{id}/sellers', 'CitiesController@sellersCity');
+        Route::get('/{id}/shops', 'CitiesController@shopsCity');
         Route::get('/{id}/{district_id}', 'CitiesController@districtCity');
     });
 

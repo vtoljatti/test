@@ -66,158 +66,155 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
-    export default {
+export default {
 
-        props: {
-            cityId: {
-                type: Number,
-                default: 0,
-                required: true
-            }
-        },
+    props: {
+        cityId: {
+            type: Number,
+            default: 0,
+            required: true
+        }
+    },
 
-        data: () => ({
-            id: null,
-            name: '',
-            city_id: 0,
-            is_hidden: 0,
-            isEditMode: false,
+    data: () => ({
+        id: null,
+        name: '',
+        city_id: 0,
+        is_hidden: 0,
+        isEditMode: false,
+        isValidate: false,
+        validateName: false,
+        validateNameMessage: false,
+        validateCity: false,
+        validateCityMessage: false,
+        messageRequiredField: 'Поле обязательно для заполнения'
+    }),
 
-            isValidate: false,
-            validateName: false,
-            validateNameMessage: false,
-            validateCity: false,
-            validateCityMessage: false,
+    computed: {
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
+        }
+    },
 
-            messageRequiredField: 'Поле обязательно для заполнения'
+    methods: {
+        ...mapActions({
+            showNotify: 'notifications/showNotify'
         }),
 
-        computed: {
-            authUser() {
-                return this.$store.getters['users/authUser'] || []
+        // Проверяем и отправляем данные
+        submitFormCity() {
+
+            // Валидируем данные
+            if (!this.validateName && !this.validateCity) {
+                this.isValidate = true
+            } else {
+                this.isValidate = false
+                this.showNotify({message: 'Некоректные данные', variant: 'danger'})
             }
-        },
 
-        methods: {
-            ...mapActions({
-                showNotify: 'notifications/showNotify'
-            }),
+            if (this.isValidate) {
 
-            // Проверяем и отправляем данные
-            submitFormCity() {
-
-                // Валидируем данные
-                if (!this.validateName && !this.validateCity) {
-                    this.isValidate = true
-                } else {
-                    this.isValidate = false
-                    this.showNotify({message: 'Некоректные данные', variant: 'danger'})
+                // Устанавливаем данные
+                let cityData = {
+                    name: this.name.trim(),
+                    is_hidden: this.is_hidden,
                 }
 
-                if (this.isValidate) {
+                if (!this.cityId) {
 
-                    // Устанавливаем данные
-                    let cityData = {
-                        name: this.name.trim(),
-                        is_hidden: this.is_hidden,
-                    }
-
-                    if (!this.cityId) {
-
-                        // режим создания
-                        this.$store.dispatch('cities/addNewCity', cityData)
-                            .then(res => {
-                                this.hideCityModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
-                                })
-
-                    } else {
-                        // режим редактирования
-                        cityData.id = this.id
-
-                        this.$store.dispatch('cities/updateCity', cityData)
-                            .then(res => {
-                                this.hideCityModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
+                    // режим создания
+                    this.$store.dispatch('cities/addNewCity', cityData)
+                        .then(res => {
+                            this.hideCityModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
                                 }
-                            )
-                    }
+                            })
+
                 } else {
-                    return
+                    // режим редактирования
+                    cityData.id = this.id
+
+                    this.$store.dispatch('cities/updateCity', cityData)
+                        .then(res => {
+                            this.hideCityModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
+                                }
+                            }
+                        )
                 }
-            },
-
-            // Закрываем модальное окно
-            hideCityModal() {
-                this.$refs.newCityModal.hide()
-                this.$emit('closeForm')
-            },
-
-            сheckName() {
-                // Валидация
-                if (!this.name && !this.name.trim()) {
-                    this.validateName = true
-                    this.validateNameMessage = this.messageRequiredField
-                } else {
-                    this.validateName = false
-                    this.validateNameMessage = false
-                }
-            },
-
-        },
-
-        watch: {
-            name: function (val) {
-                this.сheckName()
+            } else {
+                return
             }
         },
 
-        beforeMount() {
+        // Закрываем модальное окно
+        hideCityModal() {
+            this.$refs.newCityModal.hide()
+            this.$emit('closeForm')
+        },
+
+        сheckName() {
+            // Валидация
+            if (!this.name && !this.name.trim()) {
+                this.validateName = true
+                this.validateNameMessage = this.messageRequiredField
+            } else {
+                this.validateName = false
+                this.validateNameMessage = false
+            }
+        },
+
+    },
+
+    watch: {
+        name: function (val) {
             this.сheckName()
-
-            // Устанавливаем значения в режиме редактирования
-            if (this.cityId) {
-                this.$store.dispatch('cities/getOneCityById', this.cityId)
-                    .then(res => {
-                        this.id = res.id
-                        this.name = res.name
-                        this.is_hidden = res.is_hidden
-                    })
-                    .catch(err => console.error(err))
-            }
-        },
-
-        mounted() {
-
-            // Запрещаем закрытие модального окна по заднему фону
-            this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-                if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
-            })
-
-            // Показываем модально окно
-            this.$refs['newCityModal'].show()
         }
+    },
+
+    beforeMount() {
+        this.сheckName()
+
+        // Устанавливаем значения в режиме редактирования
+        if (this.cityId) {
+            this.$store.dispatch('cities/getOneCityById', this.cityId)
+                .then(res => {
+                    this.id = res.id
+                    this.name = res.name
+                    this.is_hidden = res.is_hidden
+                })
+                .catch(err => console.error(err))
+        }
+    },
+
+    mounted() {
+        // Запрещаем закрытие модального окна по заднему фону
+        this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+            if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
+        })
+
+        // Показываем модально окно
+        this.$refs['newCityModal'].show()
     }
+}
 </script>

@@ -1,11 +1,11 @@
-const allStreets = state => state.streets;
-const allDistricts = state => state.districts;
-const allVillages = state => state.villages;
-const act = state => state.act;
+const pickedDay = state => state.pickedDay || '';
+const formAct = state => state.formAct || '';
+const listActs = state => state.listActs || '';
+const filterActs = state => state.filterActs || '';
 
 export {
-    allStreets,
-    allDistricts,
-    allVillages,
-    act
+    pickedDay,
+    formAct,
+    listActs,
+    filterActs
 }

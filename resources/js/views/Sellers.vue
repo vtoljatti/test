@@ -20,7 +20,7 @@
 
             <b-row class="p-3 justify-content-left text-left bg-filter">
                 <b-col xl="3" lg="3" md="4" class="my-1 justify-content-center">
-                    <b-form-input type="search" v-model="searchText" @change="searchByText" placeholder="Поиск"/>
+                    <b-form-input type="search" v-model="searchText" @input="searchByText($event)" placeholder="Поиск"/>
                 </b-col>
 
                 <b-col xl="3" lg="3" md="4" class="my-1 justify-content-center">
@@ -103,7 +103,6 @@ import { mapActions } from 'vuex'
 import { debounce } from 'lodash'
 
 export default {
-
     components: {
         Page401,
         ModalSeller,
@@ -125,12 +124,10 @@ export default {
             return this.$store.getters['users/authUser'] || []
         },
 
-        // Берем Продавцов
         allSellers() {
             return this.$store.getters['sellers/allSellers'] || []
         },
 
-        // Берем Города
         allCities() {
             return this.$store.getters['cities/allCities'] || []
         },
@@ -173,8 +170,7 @@ export default {
         }
     },
     methods: {
-
-        // // Получаем экшены
+        // Получаем экшены
         ...mapActions({
             getallSellers: 'sellers/getallSellers',
             getAllCities: 'cities/getAllCities',
@@ -193,9 +189,9 @@ export default {
             this.editableSellerId = null
         },
 
-        searchByText: debounce(function() {
-            // разобраться
-        }, 5000),
+        searchByText: debounce(function(searchText) {
+            this.searchText = searchText
+        }, 200),
 
         // Название города по id
         cityName(cityId) {
@@ -207,6 +203,8 @@ export default {
     },
 
     beforeMount() {
+        this.$store.dispatch('users/getAuthUser');
+
         // Загружаем в store продавцов
         if (!this.allSellers.length) {
             this.$store.dispatch('sellers/getAllSellers');

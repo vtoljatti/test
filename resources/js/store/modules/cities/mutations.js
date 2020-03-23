@@ -1,4 +1,4 @@
-const SET_ALL_CITIES = (state, cities) => {
+const CITIES = (state, cities) => {
     state.cities = cities
 };
 
@@ -15,7 +15,7 @@ const SET_ALL_VILLAGES = (state, villages) => {
 };
 
 export {
-    SET_ALL_CITIES,
+    CITIES,
     SET_ALL_STREETS,
     SET_ALL_DISTRICTS,
     SET_ALL_VILLAGES

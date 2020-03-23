@@ -92,225 +92,222 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
-    export default {
+export default {
+    props: {
+        streetId: {
+            type: Number,
+            default: 0,
+            required: true
+        }
+    },
 
-        props: {
-            streetId: {
-                type: Number,
-                default: 0,
-                required: true
-            }
+    data: () => ({
+        id: null,
+        name: '',
+        city_id: 0,
+        district_id: 0,
+        is_hidden: 0,
+        isEditMode: false,
+        isValidate: false,
+        validateName: false,
+        validateNameMessage: false,
+        validateCity: false,
+        validateCityMessage: false,
+        validateDistrict: false,
+        validateDistrictMessage: false,
+        messageRequiredField: 'Поле обязательно для заполнения'
+    }),
+
+    computed: {
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
         },
 
-        data: () => ({
-            id: null,
-            name: '',
-            city_id: 0,
-            district_id: 0,
-            is_hidden: 0,
-            isEditMode: false,
+        allCities() {
+            return this.$store.getters['cities/allCities']
+        },
 
-            isValidate: false,
-            validateName: false,
-            validateNameMessage: false,
-            validateCity: false,
-            validateCityMessage: false,
-            validateDistrict: false,
-            validateDistrictMessage: false,
+        allDistricts() {
+            return this.$store.getters['districts/allDistricts'] || []
+        },
 
-            messageRequiredField: 'Поле обязательно для заполнения'
+        // Меняем список районов в зависимости от города
+        districtsCity() {
+            if (this.allDistricts.length) {
+                let [...districts] = this.allDistricts
+                return this.city_id ? districts.filter(district => district.city_id === this.city_id) : districts
+            }
+            return []
+        },
+    },
+
+    methods: {
+        ...mapActions({
+            showNotify: 'notifications/showNotify'
         }),
 
-        computed: {
-            authUser() {
-                return this.$store.getters['users/authUser'] || []
-            },
+        // Проверяем и отправляем данные
+        submitFormStreet() {
 
-            allCities() {
-                return this.$store.getters['cities/allCities']
-            },
+            // Валидируем данные
+            if (!this.validateName && !this.validateCity) {
+                this.isValidate = true
+            } else {
+                this.isValidate = false
+                this.showNotify({message: 'Некоректные данные', variant: 'danger'})
+            }
 
-            allDistricts() {
-                return this.$store.getters['districts/allDistricts'] || []
-            },
+            if (this.isValidate) {
 
-            // Меняем список районов в зависимости от города
-            districtsCity() {
-                if (this.allDistricts.length) {
-                    let [...districts] = this.allDistricts
-                    return this.city_id ? districts.filter(district => district.city_id === this.city_id) : districts
-                }
-                return []
-            },
-        },
-
-        methods: {
-            ...mapActions({
-                showNotify: 'notifications/showNotify'
-            }),
-
-            // Проверяем и отправляем данные
-            submitFormStreet() {
-
-                // Валидируем данные
-                if (!this.validateName && !this.validateCity) {
-                    this.isValidate = true
-                } else {
-                    this.isValidate = false
-                    this.showNotify({message: 'Некоректные данные', variant: 'danger'})
+                // Устанавливаем данные
+                let streetData = {
+                    name: this.name.trim(),
+                    city_id: this.city_id,
+                    district_id: this.district_id,
+                    is_hidden: this.is_hidden,
                 }
 
-                if (this.isValidate) {
+                if (!this.streetId) {
 
-                    // Устанавливаем данные
-                    let streetData = {
-                        name: this.name.trim(),
-                        city_id: this.city_id,
-                        district_id: this.district_id,
-                        is_hidden: this.is_hidden,
-                    }
-
-                    if (!this.streetId) {
-
-                        // режим создания
-                        this.$store.dispatch('streets/addNewStreet', streetData)
-                            .then(res => {
-                                this.hideStreetModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
-                                })
-
-                    } else {
-                        // режим редактирования
-                        streetData.id = this.id
-
-                        this.$store.dispatch('streets/updateStreet', streetData)
-                            .then(res => {
-                                this.hideStreetModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
+                    // режим создания
+                    this.$store.dispatch('streets/addNewStreet', streetData)
+                        .then(res => {
+                            this.hideStreetModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
                                 }
-                            )
-                    }
+                            })
+
                 } else {
-                    return
+                    // режим редактирования
+                    streetData.id = this.id
+
+                    this.$store.dispatch('streets/updateStreet', streetData)
+                        .then(res => {
+                            this.hideStreetModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
+                                }
+                            }
+                        )
                 }
-            },
-
-            // Закрываем модальное окно
-            hideStreetModal() {
-                this.$refs.newStreetModal.hide()
-                this.$emit('closeForm')
-            },
-
-            сheckName() {
-                // Валидация
-                if (!this.name && !this.name.trim()) {
-                    this.validateName = true
-                    this.validateNameMessage = this.messageRequiredField
-                } else {
-                    this.validateName = false
-                    this.validateNameMessage = false
-                }
-            },
-
-
-            сheckCityId() {
-                // Валидация
-                if (!this.city_id) {
-                    this.validateCity = true
-                    this.validateCityMessage = this.messageRequiredField
-                } else {
-                    this.validateCity = false
-                    this.validateCityMessage = false
-                }
-            },
-
-            сheckDistrictId() {
-                // Валидация
-                if (!this.district_id) {
-                    this.validateDistrict = true
-                    this.validateDistrictMessage = this.messageRequiredField
-                } else {
-                    this.validateDistrict = false
-                    this.validateDistrictMessage = false
-                }
-            }
-
-        },
-
-        watch: {
-            name: function (val) {
-                this.сheckName()
-            },
-
-            city_id: function (val) {
-                this.сheckCityId()
-            },
-
-            district_id: function (val) {
-                this.сheckDistrictId()
+            } else {
+                return
             }
         },
 
-        beforeMount() {
-            this.сheckName()
-            this.сheckCityId()
-            this.сheckDistrictId()
+        // Закрываем модальное окно
+        hideStreetModal() {
+            this.$refs.newStreetModal.hide()
+            this.$emit('closeForm')
+        },
 
-            // Устанавливаем значения в режиме редактирования
-            if (this.streetId) {
-                this.$store.dispatch('streets/getOneStreetById', this.streetId)
-                    .then(res => {
-                        this.id = res.id
-                        this.name = res.name
-                        this.city_id = res.city_id
-                        this.district_id = res.district_id
-                        this.is_hidden = res.is_hidden
-                    })
-                    .catch(err => console.error(err))
+        сheckName() {
+            // Валидация
+            if (!this.name && !this.name.trim()) {
+                this.validateName = true
+                this.validateNameMessage = this.messageRequiredField
+            } else {
+                this.validateName = false
+                this.validateNameMessage = false
             }
         },
 
-        mounted() {
 
-            // Запрещаем закрытие модального окна по заднему фону
-            this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-                if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
-            })
-
-            // Загружаем в store города
-            if (!this.allCities.length) {
-                this.$store.dispatch('cities/getAllCities');
+        сheckCityId() {
+            // Валидация
+            if (!this.city_id) {
+                this.validateCity = true
+                this.validateCityMessage = this.messageRequiredField
+            } else {
+                this.validateCity = false
+                this.validateCityMessage = false
             }
+        },
 
-            // Загружаем в store районы
-            if (!this.allDistricts.length) {
-                this.$store.dispatch('districts/getAllDistricts');
+        сheckDistrictId() {
+            // Валидация
+            if (!this.district_id) {
+                this.validateDistrict = true
+                this.validateDistrictMessage = this.messageRequiredField
+            } else {
+                this.validateDistrict = false
+                this.validateDistrictMessage = false
             }
-
-            // Показываем модально окно
-            this.$refs['newStreetModal'].show()
         }
+
+    },
+
+    watch: {
+        name: function (val) {
+            this.сheckName()
+        },
+
+        city_id: function (val) {
+            this.сheckCityId()
+        },
+
+        district_id: function (val) {
+            this.сheckDistrictId()
+        }
+    },
+
+    beforeMount() {
+        this.сheckName()
+        this.сheckCityId()
+        this.сheckDistrictId()
+
+        // Устанавливаем значения в режиме редактирования
+        if (this.streetId) {
+            this.$store.dispatch('streets/getOneStreetById', this.streetId)
+                .then(res => {
+                    this.id = res.id
+                    this.name = res.name
+                    this.city_id = res.city_id
+                    this.district_id = res.district_id
+                    this.is_hidden = res.is_hidden
+                })
+                .catch(err => console.error(err))
+        }
+    },
+
+    mounted() {
+
+        // Запрещаем закрытие модального окна по заднему фону
+        this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+            if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
+        })
+
+        // Загружаем в store города
+        if (!this.allCities.length) {
+            this.$store.dispatch('cities/getAllCities');
+        }
+
+        // Загружаем в store районы
+        if (!this.allDistricts.length) {
+            this.$store.dispatch('districts/getAllDistricts');
+        }
+
+        // Показываем модально окно
+        this.$refs['newStreetModal'].show()
     }
+}
 </script>

@@ -84,188 +84,178 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
-    export default {
+export default {
+    props: {
+        villageId: {
+            type: Number,
+            default: 0,
+            required: true
+        }
+    },
 
-        props: {
-            villageId: {
-                type: Number,
-                default: 0,
-                required: true
-            }
+    data: () => ({
+        id: null,
+        name: '',
+        city_id: 0,
+        is_hidden: 0,
+        isEditMode: false,
+        price: 0,
+        isValidate: false,
+        validateName: false,
+        validateNameMessage: false,
+        validateCity: false,
+        validateCityMessage: false,
+        messageRequiredField: 'Поле обязательно для заполнения'
+    }),
+
+    computed: {
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
         },
+        allCities() {
+            return this.$store.getters['cities/allCities']
+        }
+    },
 
-        data: () => ({
-            id: null,
-            name: '',
-            city_id: 0,
-            is_hidden: 0,
-            isEditMode: false,
-            price: 0,
-
-            isValidate: false,
-            validateName: false,
-            validateNameMessage: false,
-            validateCity: false,
-            validateCityMessage: false,
-
-            messageRequiredField: 'Поле обязательно для заполнения'
+    methods: {
+        ...mapActions({
+            showNotify: 'notifications/showNotify'
         }),
 
-        computed: {
-            authUser() {
-                return this.$store.getters['users/authUser'] || []
-            },
-            allCities() {
-                return this.$store.getters['cities/allCities']
+        // Проверяем и отправляем данные
+        submitFormVillage() {
+            // Валидируем данные
+            if (!this.validateName && !this.validateCity) {
+                this.isValidate = true
+            } else {
+                this.isValidate = false
+                this.showNotify({message: 'Некоректные данные', variant: 'danger'})
             }
-        },
 
-        methods: {
-            ...mapActions({
-                showNotify: 'notifications/showNotify'
-            }),
-
-            // Проверяем и отправляем данные
-            submitFormVillage() {
-
-                // Валидируем данные
-                if (!this.validateName && !this.validateCity) {
-                    this.isValidate = true
-                } else {
-                    this.isValidate = false
-                    this.showNotify({message: 'Некоректные данные', variant: 'danger'})
+            if (this.isValidate) {
+                // Устанавливаем данные
+                let villageData = {
+                    name: this.name.trim(),
+                    city_id: this.city_id,
+                    price: this.price,
+                    is_hidden: this.is_hidden,
                 }
 
-                if (this.isValidate) {
-
-                    // Устанавливаем данные
-                    let villageData = {
-                        name: this.name.trim(),
-                        city_id: this.city_id,
-                        price: this.price,
-                        is_hidden: this.is_hidden,
-                    }
-
-                    if (!this.villageId) {
-
-                        // режим создания
-                        this.$store.dispatch('villages/addNewVillage', villageData)
-                            .then(res => {
-                                this.hideVillageModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
-                                })
-
-                    } else {
-                        // режим редактирования
-                        villageData.id = this.id
-
-                        this.$store.dispatch('villages/updateVillage', villageData)
-                            .then(res => {
-                                this.hideVillageModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
+                if (!this.villageId) {
+                    // режим создания
+                    this.$store.dispatch('villages/addNewVillage', villageData)
+                        .then(res => {
+                            this.hideVillageModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
                                 }
-                            )
-                    }
+                            })
                 } else {
-                    return
+                    // режим редактирования
+                    villageData.id = this.id
+
+                    this.$store.dispatch('villages/updateVillage', villageData)
+                        .then(res => {
+                            this.hideVillageModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
+                                }
+                            }
+                        )
                 }
-            },
-
-            // Закрываем модальное окно
-            hideVillageModal() {
-                this.$refs.newVillageModal.hide()
-                this.$emit('closeForm')
-            },
-
-            сheckName() {
-                // Валидация
-                if (!this.name && !this.name.trim()) {
-                    this.validateName = true
-                    this.validateNameMessage = this.messageRequiredField
-                } else {
-                    this.validateName = false
-                    this.validateNameMessage = false
-                }
-            },
-
-
-            сheckCityId() {
-                // Валидация
-                if (!this.city_id) {
-                    this.validateCity = true
-                    this.validateCityMessage = this.messageRequiredField
-                } else {
-                    this.validateCity = false
-                    this.validateCityMessage = false
-                }
-            },
-
-        },
-
-        watch: {
-            name: function (val) {
-                this.сheckName()
-            },
-
-            city_id: function (val) {
-                this.сheckCityId()
+            } else {
+                return
             }
         },
 
-        beforeMount() {
+        // Закрываем модальное окно
+        hideVillageModal() {
+            this.$refs.newVillageModal.hide()
+            this.$emit('closeForm')
+        },
+
+        сheckName() {
+            // Валидация
+            if (!this.name && !this.name.trim()) {
+                this.validateName = true
+                this.validateNameMessage = this.messageRequiredField
+            } else {
+                this.validateName = false
+                this.validateNameMessage = false
+            }
+        },
+
+        сheckCityId() {
+            // Валидация
+            if (!this.city_id) {
+                this.validateCity = true
+                this.validateCityMessage = this.messageRequiredField
+            } else {
+                this.validateCity = false
+                this.validateCityMessage = false
+            }
+        },
+
+    },
+
+    watch: {
+        name: function (val) {
             this.сheckName()
-            this.сheckCityId()
-
-            // Устанавливаем значения в режиме редактирования
-            if (this.villageId) {
-                this.$store.dispatch('villages/getOneVillageById', this.villageId)
-                    .then(res => {
-                        this.id = res.id
-                        this.name = res.name
-                        this.price = res.price
-                        this.city_id = res.city_id
-                        this.is_hidden = res.is_hidden
-                    })
-                    .catch(err => console.error(err))
-            }
         },
 
-        mounted() {
-
-            // Запрещаем закрытие модального окна по заднему фону
-            this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-                if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
-            })
-
-            // Загружаем в store города
-            if (!this.allCities.length) {
-                this.$store.dispatch('cities/getAllCities');
-            }
-
-            // Показываем модально окно
-            this.$refs['newVillageModal'].show()
+        city_id: function (val) {
+            this.сheckCityId()
         }
+    },
+
+    beforeMount() {
+        this.сheckName()
+        this.сheckCityId()
+
+        // Устанавливаем значения в режиме редактирования
+        if (this.villageId) {
+            this.$store.dispatch('villages/getOneVillageById', this.villageId)
+                .then(res => {
+                    this.id = res.id
+                    this.name = res.name
+                    this.price = res.price
+                    this.city_id = res.city_id
+                    this.is_hidden = res.is_hidden
+                })
+                .catch(err => console.error(err))
+        }
+    },
+
+    mounted() {
+        // Запрещаем закрытие модального окна по заднему фону
+        this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+            if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
+        })
+
+        if (!this.allCities.length) {
+            this.$store.dispatch('cities/getAllCities');
+        }
+
+        // Показываем модально окно
+        this.$refs['newVillageModal'].show()
     }
+}
 </script>

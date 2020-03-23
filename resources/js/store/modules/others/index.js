@@ -4,7 +4,7 @@ import * as getters from './getters'
 
 const state = {
     roles: [],
-    ass: []
+    dataModal: []
 }
 
 export default {

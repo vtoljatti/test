@@ -77,185 +77,179 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
-    export default {
+export default {
+    props: {
+        sellerId: {
+            type: Number,
+            default: 0,
+            required: true
+        }
+    },
 
-        props: {
-            sellerId: {
-                type: Number,
-                default: 0,
-                required: true
-            }
+    data: () => ({
+        id: null,
+        name: '',
+        city_id: 0,
+        is_hidden: 0,
+        isEditMode: false,
+        isValidate: false,
+        validateName: false,
+        validateNameMessage: false,
+        validateCity: false,
+        validateCityMessage: false,
+        messageRequiredField: 'Поле обязательно для заполнения'
+    }),
+
+    computed: {
+        authUser() {
+            return this.$store.getters['users/authUser'] || []
         },
 
-        data: () => ({
-            id: null,
-            name: '',
-            city_id: 0,
-            is_hidden: 0,
-            isEditMode: false,
+        allCities() {
+            return this.$store.getters['cities/allCities']
+        }
+    },
 
-            isValidate: false,
-            validateName: false,
-            validateNameMessage: false,
-            validateCity: false,
-            validateCityMessage: false,
-
-            messageRequiredField: 'Поле обязательно для заполнения'
+    methods: {
+        ...mapActions({
+            showNotify: 'notifications/showNotify'
         }),
 
-        computed: {
-            authUser() {
-                return this.$store.getters['users/authUser'] || []
-            },
-            allCities() {
-                return this.$store.getters['cities/allCities']
+        // Проверяем и отправляем данные
+        submitFormSeller() {
+
+            // Валидируем данные
+            if (!this.validateName && !this.validateCity) {
+                this.isValidate = true
+            } else {
+                this.isValidate = false
+                this.showNotify({message: 'Некоректные данные', variant: 'danger'})
             }
-        },
 
-        methods: {
-            ...mapActions({
-                showNotify: 'notifications/showNotify'
-            }),
+            if (this.isValidate) {
 
-            // Проверяем и отправляем данные
-            submitFormSeller() {
-
-                // Валидируем данные
-                if (!this.validateName && !this.validateCity) {
-                    this.isValidate = true
-                } else {
-                    this.isValidate = false
-                    this.showNotify({message: 'Некоректные данные', variant: 'danger'})
+                // Устанавливаем данные
+                let sellerData = {
+                    name: this.name.trim(),
+                    city_id: this.city_id,
+                    is_hidden: this.is_hidden,
                 }
 
-                if (this.isValidate) {
+                if (!this.sellerId) {
 
-                    // Устанавливаем данные
-                    let sellerData = {
-                        name: this.name.trim(),
-                        city_id: this.city_id,
-                        is_hidden: this.is_hidden,
-                    }
-
-                    if (!this.sellerId) {
-
-                        // режим создания
-                        this.$store.dispatch('sellers/addNewSeller', sellerData)
-                            .then(res => {
-                                this.hideSellerModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
-                                })
-
-                    } else {
-                        // режим редактирования
-                        sellerData.id = this.id
-
-                        this.$store.dispatch('sellers/updateSeller', sellerData)
-                            .then(res => {
-                                this.hideSellerModal()
-                                this.showNotify({ message: res, variant: 'success' })
-                            })
-                            .catch(
-                                errors => {
-                                    if (Array.isArray(errors)) {
-                                        errors.forEach(err => {
-                                            this.showNotify({message: err, variant: 'danger'})
-                                        })
-                                    } else {
-                                        this.showNotify({message: errors, variant: 'danger'})
-                                    }
+                    // режим создания
+                    this.$store.dispatch('sellers/addNewSeller', sellerData)
+                        .then(res => {
+                            this.hideSellerModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
                                 }
-                            )
-                    }
+                            })
+
                 } else {
-                    return
+                    // режим редактирования
+                    sellerData.id = this.id
+
+                    this.$store.dispatch('sellers/updateSeller', sellerData)
+                        .then(res => {
+                            this.hideSellerModal()
+                            this.showNotify({ message: res, variant: 'success' })
+                        })
+                        .catch(
+                            errors => {
+                                if (Array.isArray(errors)) {
+                                    errors.forEach(err => {
+                                        this.showNotify({message: err, variant: 'danger'})
+                                    })
+                                } else {
+                                    this.showNotify({message: errors, variant: 'danger'})
+                                }
+                            }
+                        )
                 }
-            },
-
-            // Закрываем модальное окно
-            hideSellerModal() {
-                this.$refs.newSellerModal.hide()
-                this.$emit('closeForm')
-            },
-
-            сheckName() {
-                // Валидация
-                if (!this.name && !this.name.trim()) {
-                    this.validateName = true
-                    this.validateNameMessage = this.messageRequiredField
-                } else {
-                    this.validateName = false
-                    this.validateNameMessage = false
-                }
-            },
-
-
-            сheckCityId() {
-                // Валидация
-                if (!this.city_id) {
-                    this.validateCity = true
-                    this.validateCityMessage = this.messageRequiredField
-                } else {
-                    this.validateCity = false
-                    this.validateCityMessage = false
-                }
-            },
-
-        },
-
-        watch: {
-            name: function (val) {
-                this.сheckName()
-            },
-
-            city_id: function (val) {
-                this.сheckCityId()
+            } else {
+                return
             }
         },
 
-        beforeMount() {
+        // Закрываем модальное окно
+        hideSellerModal() {
+            this.$refs.newSellerModal.hide()
+            this.$emit('closeForm')
+        },
+
+        сheckName() {
+            // Валидация
+            if (!this.name && !this.name.trim()) {
+                this.validateName = true
+                this.validateNameMessage = this.messageRequiredField
+            } else {
+                this.validateName = false
+                this.validateNameMessage = false
+            }
+        },
+
+        сheckCityId() {
+            // Валидация
+            if (!this.city_id) {
+                this.validateCity = true
+                this.validateCityMessage = this.messageRequiredField
+            } else {
+                this.validateCity = false
+                this.validateCityMessage = false
+            }
+        },
+    },
+
+    watch: {
+        name: function (val) {
             this.сheckName()
-            this.сheckCityId()
-
-            // Устанавливаем значения в режиме редактирования
-            if (this.sellerId) {
-                this.$store.dispatch('sellers/getOneSellerById', this.sellerId)
-                    .then(res => {
-                        this.id = res.id
-                        this.name = res.name
-                        this.city_id = res.city_id
-                        this.is_hidden = res.is_hidden
-                    })
-                    .catch(err => console.error(err))
-            }
         },
 
-        mounted() {
-
-            // Запрещаем закрытие модального окна по заднему фону
-            this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-                if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
-            })
-
-            // Загружаем в store города
-            if (!this.allCities.length) {
-                this.$store.dispatch('cities/getAllCities');
-            }
-
-            // Показываем модально окно
-            this.$refs['newSellerModal'].show()
+        city_id: function (val) {
+            this.сheckCityId()
         }
+    },
+
+    beforeMount() {
+        this.сheckName()
+        this.сheckCityId()
+
+        // Устанавливаем значения в режиме редактирования
+        if (this.sellerId) {
+            this.$store.dispatch('sellers/getOneSellerById', this.sellerId)
+                .then(res => {
+                    this.id = res.id
+                    this.name = res.name
+                    this.city_id = res.city_id
+                    this.is_hidden = res.is_hidden
+                })
+                .catch(err => console.error(err))
+        }
+    },
+
+    mounted() {
+        // Запрещаем закрытие модального окна по заднему фону
+        this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+            if (bvEvent.trigger === 'backdrop') bvEvent.preventDefault()
+        })
+
+        if (!this.allCities.length) {
+            this.$store.dispatch('cities/getAllCities');
+        }
+
+        // Показываем модально окно
+        this.$refs['newSellerModal'].show()
     }
+}
 </script>

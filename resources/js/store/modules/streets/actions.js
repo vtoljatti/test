@@ -1,6 +1,5 @@
 // Получаем все улицы
 const getAllStreets = ({ commit }) => {
-    console.log('getAllStreets')
     axios.get('/api/streets')
         .then(res => commit('SET_ALL_STREETS', res.data.streets))
         .catch(err => console.error(err))

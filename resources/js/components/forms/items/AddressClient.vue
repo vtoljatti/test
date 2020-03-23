@@ -7,39 +7,42 @@
                 </small>
             </div>
             <div class="px-1 pt-2 text-left">
-                <label class="small text-left w-100">
+                <label class="small text-left mx-1 w-100">
                     <small>Улица *</small>
                     <b-form-input
-                        list="list-streets"
                         class="text-center small"
+                        list="list-streets"
+                        :class="{'border-danger': validateStreet}"
                         type="text"
                         v-model="street"
                         placeholder="Улица"
-                        required
                         size="sm"
                     />
+                    <datalist id="list-streets">
+                        <b-row>
+                            <b-col v-for="street in streetsDistrict">
+                                <option>{{ street.name }}</option>
+                            </b-col>
+                        </b-row>
+                    </datalist>
+                    <small v-if="validateStreetMessage" class="text-danger font-weight-bold">{{ validateStreetMessage }}</small>
                 </label>
-
-                <datalist id="list-streets">
-                    <b-row>
-                        <b-col v-for="street in streetsDistrict">
-                            <option>{{ street.name }}</option>
-                        </b-col>
-                    </b-row>
-                </datalist>
             </div>
             <div class="px-1 d-flex justify-content-between align-items-center">
-                <label class="small text-left">
+
+                <label class="small text-left mx-1 w-100">
                     <small>Дом *</small>
                     <b-form-input
-                        type="text"
                         class="text-center"
-                        placeholder="Дом"
+                        :class="{'border-danger': validateHome}"
+                        type="text"
                         v-model="home"
-                        required
+                        placeholder="Дом"
                         size="sm"
                     />
+                    <small v-if="validateHomeMessage" class="text-danger font-weight-bold">{{ validateHomeMessage }}</small>
                 </label>
+
                 <label class="small text-left mx-1">
                     <small>Квартира/офис</small>
                     <b-form-input
@@ -66,22 +69,35 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data', 'district'],
 
     data() {
         return {
-            street: null,
-            home: null,
-            apartment: null,
-            porch: null,
+            isValidate: false,
+            street: '',
+            home: '',
+            apartment: '',
+            porch: '',
+            validateStreet: false,
+            validateStreetMessage: false,
+            validateHome: false,
+            validateHomeMessage: false,
+            messageRequiredField: ''
         }
     },
 
     computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal'
+        }),
+
         authUser() {
             return this.$store.getters['users/authUser'] || []
         },
+
         allStreets() {
             return this.$store.getters['streets/allStreetsCity'] || []
         },
@@ -94,6 +110,7 @@ export default {
             }
             return []
         },
+
     },
 
     methods: {
@@ -102,17 +119,61 @@ export default {
                 street: this.street,
                 home: this.home,
                 apartment: this.apartment,
-                porch: this.porch
+                porch: this.porch,
+                isValidate: this.isValidate
             })
-        }
+        },
+
+        validate() {
+            this.сheckStreet()
+            this.сheckHome()
+            if (!this.street || !this.home) {
+                this.isValidate = false
+            } else {
+                this.isValidate = true
+            }
+        },
+
+        сheckStreet() {
+            // Валидация
+            if (!this.street) {
+                this.validateStreet = true
+                this.validateStreetMessage = this.messageRequiredField
+            } else {
+                this.validateStreet = false
+                this.validateStreetMessage = false
+            }
+        },
+
+        сheckHome() {
+            // Валидация
+            if (!this.home) {
+                this.validateHome = true
+                this.validateHomeMessage = this.messageRequiredField
+            } else {
+                this.validateHome = false
+                this.validateHomeMessage = false
+            }
+        },
     },
 
     watch: {
+        dataModal: function (val) {
+            this.street =  this.dataModal.act.street;
+            this.home =  this.dataModal.act.home;
+            this.apartment =  this.dataModal.act.apartment;
+            this.porch =  this.dataModal.act.porch;
+            this.validate();
+            this.dataCommon()
+        },
+
         street: function (val) {
+            this.validate();
             this.dataCommon()
         },
 
         home: function (val) {
+            this.validate();
             this.dataCommon()
         },
 
@@ -126,6 +187,7 @@ export default {
     },
 
     created() {
+        this.validate();
         this.dataCommon();
     },
 

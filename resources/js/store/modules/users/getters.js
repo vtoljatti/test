@@ -1,5 +1,5 @@
-const authUser = state => state.user;
-const allUsers = state => state.users;
+const authUser = state => state.user || [];
+const allUsers = state => state.users || [];
 
 export {
     authUser,

@@ -6,7 +6,7 @@
                     <i class="fa fa-caret-down"></i> &nbsp; Контакты
                 </small>
             </div>
-            <div class="px-1 pt-2 text-left">
+            <div class="px-1 pt-2 text-left rounded" :class="{'border border-danger m-2 p-2': !isValidate}">
                 <label class="small text-left w-100">
                     <small>Имя клиента</small>
                     <b-form-input
@@ -26,7 +26,6 @@
                         placeholder="Мобильный"
                         maxlength="16"
                         size="sm"
-                        required
                         @focusout="focusoutPhone"
                         @input="phoneFormat($event, 'phone')"
                     />
@@ -41,7 +40,6 @@
                         placeholder="Мобильный"
                         maxlength="16"
                         size="sm"
-                        required
                         @focusout="focusoutPhoneSpare"
                         @input="phoneFormat($event, 'phoneSpare')"
 
@@ -56,7 +54,6 @@
                         placeholder="Городской"
                         maxlength="9"
                         size="sm"
-                        required
                         @input="phoneFormatHome($event, 'phoneHome')"
                     />
                 </label>
@@ -66,35 +63,52 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: ['data'],
+
     data() {
         return {
+            isValidate: false,
             lastName: null,
             phone: '',
             phoneSpare: '',
             phoneHome: ''
         }
     },
+
     methods: {
+        validate() {
+            if (!this.phone && !this.phoneSpare && !this.phoneHome) {
+                this.isValidate = false
+            } else {
+                this.isValidate = true
+            }
+        },
+
         dataCommon() {
             this.data({
                 lastName: this.lastName,
                 phone: this.phone,
                 phoneSpare: this.phoneSpare,
-                phoneHome: this.phoneHome
+                phoneHome: this.phoneHome,
+                isValidate: this.isValidate
             })
         },
+
         focusoutPhone() {
             if (this.phone === '+7') {
                 this.phone = ''
             }
         },
+
         focusoutPhoneSpare() {
             if (this.phoneSpare === '+7') {
                 this.phoneSpare = ''
             }
         },
+
         phoneFormat(value, field) {
             if (this.value !== '') {
                 this[field] = this[field].replace(new RegExp('\\D+', 'g'), '');
@@ -111,6 +125,7 @@ export default {
                 }
             }
         },
+
         phoneFormatHome(value, field) {
             if (this.value !== '') {
                 this[field] = this[field].replace(new RegExp('\\D+', 'g'), '');
@@ -127,21 +142,43 @@ export default {
             }
         }
     },
+
+    computed: {
+        ...mapGetters({
+            dataModal: 'others/dataModal'
+        })
+    },
+
     watch: {
+        dataModal: function (val) {
+            this.lastName =  this.dataModal.act.last_name;
+            this.phone =  this.dataModal.act.phone_1;
+            this.phoneSpare =  this.dataModal.act.phone_2;
+            this.phoneHome =  this.dataModal.act.phone_3;
+
+            this.validate()
+            this.dataCommon()
+        },
+
         lastName: function (val) {
             this.dataCommon()
         },
         phone: function (val) {
+            this.validate()
             this.dataCommon()
         },
         phoneHome: function (val) {
+            this.validate()
             this.dataCommon()
         },
         phoneSpare: function (val) {
+            this.validate()
             this.dataCommon()
         }
     },
+
     created() {
+        this.validate()
         this.dataCommon()
     }
 }
